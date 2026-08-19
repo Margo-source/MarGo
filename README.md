@@ -13,20 +13,21 @@ This repository contains the project webpage and the reference implementation us
 ├── index.html            # Project webpage (paper landing page)
 ├── assets/               # Figures and demo videos used on the webpage
 ├── static/                # CSS/JS for the webpage
-└── source/
-    ├── Mobiman/            # Near-RT RIC xApps + the TGN-MAPPO training/inference pipeline
+└── source_code/
+    ├── ric/                # Main near-RT RIC handover xApp
+    ├── Mobiman/            # Supporting xApps and the TGN-MAPPO training/inference pipeline
     ├── gnb/                # gNB-side monitoring scripts and F1AP/CU-CP scaffolding
-    ├── core/               # Example 5G core subscriber database
-    └── data_example/       # Example collected RAN/traffic data
+    └── data_format/        # Example collected RAN/traffic data
 ```
 
-### `source/Mobiman/`
+### `source_code/ric/` and `source_code/Mobiman/`
 
-Near-RT RIC xApps and the RL pipeline behind Mobiman's handover decisions.
+`source_code/ric/Mobiman_xapp.py` is the main handover xApp. It streams RAN
+telemetry into the shared database and issues handover commands. The supporting
+xApps and RL pipeline are organized under `source_code/Mobiman/`:
 
 ```
 Mobiman/
-├── Mobiman_xapp.py     # Main handover xApp: streams RAN telemetry into the shared DB and issues handover commands
 ├── rule_ho_xapp.py     # Rule/threshold-based handover xApp, used as a baseline
 ├── monitor.py          # Real-time Dash dashboard (reads data/ran.db, serves http://localhost:8050)
 ├── ue_map.py           # Pairs UE identifiers (SUCI / RAN-UE-ID / AMF-UE-ID) from AMF and CU logs
@@ -42,25 +43,25 @@ Mobiman/
 Run training:
 
 ```bash
-cd source/Mobiman/algrithom
+cd source_code/Mobiman/algrithom
 ./tran_sc.sh
 ```
 
 Run inference:
 
 ```bash
-python source/Mobiman/algrithom/tgn.py --mode inference --db /path/to/your/ran.db --num_du 3
+python source_code/Mobiman/algrithom/tgn.py --mode inference --db /path/to/your/ran.db --num_du 3
 ```
 
 See `python runner/train_sc.py --help` / `python tgn.py --help` for the full list of options.
 
-### `source/gnb/`
+### `source_code/gnb/`
 
 Monitoring scripts that run alongside the gNB/CU, plus scaffolding for the F1AP CU-CP procedures and UE monitor library.
 
 ```
 gnb/
-├── docs/
+├── amf_suci/
 │   ├── amf_suci_sync.py    # Tails the AMF log and syncs SUCI suffixes into the UE monitor DB
 │   ├── iperf_monitor.py    # Generates UL/DL iperf traffic and measures loaded RTT
 │   └── ping_monitor.py     # Records per-ping RTT and cumulative packet loss
@@ -69,9 +70,9 @@ gnb/
     └── ue_monitor/               # UE monitor library
 ```
 
-### `source/core/` and `source/data_example/`
+### `source_code/data_format/`
 
-Example 5G core subscriber configuration and sample RAN/traffic data collected from the testbed, provided for reference.
+Sample RAN and traffic data collected from the testbed, provided for reference.
 
 ## Requirements
 
